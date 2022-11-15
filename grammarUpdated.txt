@@ -33,8 +33,10 @@
                 → [VarName]
                 → [Number]
 
-<If>            → IF (<Cond>) THEN <Code> END
-                → IF (<Cond>) THEN <Code> ELSE <Code> END
+<If>            → IF (<Cond>) THEN <Code>
+
+<IfSeq>         → END
+                → ELSE <Code> END
 
 <While>         → WHILE (<Cond>) DO <Code> END
 <Print>         → PRINT([VarName])

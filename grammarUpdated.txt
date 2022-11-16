@@ -30,10 +30,11 @@
                 → ε
 
 <Atom>          → - <Atom>
+                → ( Atom )
                 → [VarName]
                 → [Number]
 
-<If>            → IF (<Cond>) THEN <Code>
+<If>            → IF (<Cond>) THEN <Code> <IfSeq>
 
 <IfSeq>         → END
                 → ELSE <Code> END

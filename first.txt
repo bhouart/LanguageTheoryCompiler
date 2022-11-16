@@ -1,31 +1,31 @@
-<Program>           /
+<Program>       BEGIN                   
 
-<Code>              END
+<Code>          ε [VARNAME] IF WHILE PRINT READ                     END ELSE
 
-<Instruction>       ,
+<Instruction>   [VARNAME] IF WHILE PRINT READ
 
-<Assign>            ,
+<Assign>        [VARNAME]
 
-<Cond>              )
+<Cond>           - ( [VarName] [Number]
 
-<Cond'>             )
+<Comp>          + < >
 
-<ExprArith>         , = > < )
+<ExprArith>     - ( [VarName] [Number]
 
-<ExprArith'>        , = > < )
+<ExprArith'>    + - ε                                               = > < ) ,
 
-<Prod>              + - ε
+<Prod>          - ( [VarName] [Number]
 
-<Prod'>
+<Prod'>         * / ε                                               + - = > < ) ,                          
 
-<Atom>
+<Atom>          - ( [VarName] [Number]
 
-<If>
+<If>            IF 
 
-<IfSeq>
+<IfSeq>         END ELSE
 
-<While>
+<While>         WHILE
 
-<Print>
+<Print>         PRINT
 
-<Read>
+<Read>          READ

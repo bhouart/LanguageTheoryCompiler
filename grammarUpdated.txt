@@ -11,11 +11,11 @@
 
 <Assign>        → [VarName] := <ExprArith>
 
-<Cond>          → <ExprArith> <Cond'>
+<Cond>          → <ExprArith> <Comp> <ExprArith>
 
-<Cond'>         → = <ExprArith>
-                → > <ExprArith>
-                → < <ExprArith>
+<Comp>          → =
+                → >
+                → <
 
 <ExprArith>     → <Prod> <ExprArith'>
 

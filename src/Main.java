@@ -24,6 +24,7 @@ public class Main{
      *
      */
     public static void main(String[] args) throws FileNotFoundException, IOException, SecurityException{
+        Parser p = new Parser();
         // Display the usage when the number of arguments is wrong (should be 1)
         if(args.length != 1){
             System.out.println("Usage:  java -jar part1.jar file.fs\n"

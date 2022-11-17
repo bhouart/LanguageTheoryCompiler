@@ -1,17 +1,18 @@
 public class Parser {
-    void match(LexicalUnit lu) {}
+    void match(LexicalUnit lu, ParseTree node) {}
     void error(Symbol s) {}
     Symbol nextToken() {return null;}
 
 
     void program() {
-        match(LexicalUnit.BEGIN);
-        match(LexicalUnit.PROGNAME);
-        code();
-        match(LexicalUnit.END);
+        ParseTree root = new ParseTree(new Symbol(null, "S"));
+        match(LexicalUnit.BEGIN, root);
+        match(LexicalUnit.PROGNAME, root);
+        code(root);
+        match(LexicalUnit.END, root);
     }
 
-    void code() {
+    void code(ParseTree father) {
         Symbol tok = nextToken();
         // follow set, if code = ε
         switch(tok.getType()) {
@@ -20,61 +21,75 @@ public class Parser {
                 return;
         }
         // else
-        instruction();
-        match(LexicalUnit.COMMA);
-        code();
+        ParseTree node = new ParseTree(new Symbol(null, "Code"));
+        father.addChild(node);
+        instruction(node);
+        match(LexicalUnit.COMMA, node);
+        code(node);
     }
 
-    void instruction() {
+    void instruction(ParseTree father) {
+        ParseTree node = new ParseTree(new Symbol(null, "Code"));
+        father.addChild(node);
         Symbol tok = nextToken();
         switch (tok.getType()) {
             case VARNAME:
-                assign(); break;
+                assign(node); break;
             case IF:
-                if_(); break;
+                if_(node); break;
             case WHILE:
-                while_(); break;
+                while_(node); break;
             case PRINT:
-                print_(); break;
+                print_(node); break;
             case READ:
-                read_(); break;
+                read_(node); break;
             default:
                 error(tok); break;
         }
     }
 
-    void assign() {
-        match(LexicalUnit.VARNAME);
-        match(LexicalUnit.ASSIGN);
-        exprArith();
+    void assign(ParseTree father) {
+        ParseTree node = new ParseTree(new Symbol(null, "Code"));
+        father.addChild(node);
+        match(LexicalUnit.VARNAME, node);
+        match(LexicalUnit.ASSIGN, node);
+        exprArith(node);
     }
 
-    void cond() {
-        exprArith();
-        comp();
-        exprArith();
+    void cond(ParseTree father) {
+        ParseTree node = new ParseTree(new Symbol(null, "Code"));
+        father.addChild(node);
+        exprArith(node);
+        comp(node);
+        exprArith(node);
     }
 
-    void comp() {
+    void comp(ParseTree father) {
+        ParseTree node = new ParseTree(new Symbol(null, "Code"));
+        father.addChild(node);
         Symbol tok = nextToken();
         switch (tok.getType()) {
             case EQUAL:
-                match(LexicalUnit.EQUAL); break;
+                match(LexicalUnit.EQUAL, node); break;
             case GREATER:
-                match(LexicalUnit.GREATER); break;
+                match(LexicalUnit.GREATER, node); break;
             case SMALLER:
-                match(LexicalUnit.SMALLER); break;
+                match(LexicalUnit.SMALLER, node); break;
             default:
                 error(tok); break;
         }
     }
 
-    void exprArith() {
-        prod();
-        exprArithPrime();
+    void exprArith(ParseTree father) {
+        ParseTree node = new ParseTree(new Symbol(null, "Code"));
+        father.addChild(node);
+        prod(node);
+        exprArithPrime(node);
     }
 
-    void exprArithPrime() {
+    void exprArithPrime(ParseTree father) {
+        ParseTree node = new ParseTree(new Symbol(null, "Code"));
+        
         Symbol tok = nextToken();
         switch(tok.getType()) {
             case EQUAL:
@@ -84,14 +99,16 @@ public class Parser {
             case COMMA:
                 return;
             case PLUS:
-                match(LexicalUnit.PLUS);
-                prod();
-                exprArithPrime();
+                father.addChild(node);
+                match(LexicalUnit.PLUS, node);
+                prod(node);
+                exprArithPrime(node);
                 break;
             case MINUS:
-                match(LexicalUnit.MINUS);
-                prod();
-                exprArithPrime();
+                father.addChild(node);
+                match(LexicalUnit.MINUS, node);
+                prod(node);
+                exprArithPrime(node);
                 break;
             default:
                 error(tok); break;
@@ -99,11 +116,11 @@ public class Parser {
 
     }
 
-    void if_() {}
-    void while_() {}
-    void print_() {}
-    void read_() {}
-    void prod() {}
+    void if_(ParseTree father) {}
+    void while_(ParseTree father) {}
+    void print_(ParseTree father) {}
+    void read_(ParseTree father) {}
+    void prod(ParseTree father) {}
 
     public static void main(String[] args) {
 

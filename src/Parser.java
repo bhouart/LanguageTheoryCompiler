@@ -43,11 +43,67 @@ public class Parser {
         }
     }
 
-    void assign() {}
+    void assign() {
+        match(LexicalUnit.VARNAME);
+        match(LexicalUnit.ASSIGN);
+        exprArith();
+    }
+
+    void cond() {
+        exprArith();
+        comp();
+        exprArith();
+    }
+
+    void comp() {
+        Symbol tok = nextToken();
+        switch (tok.getType()) {
+            case EQUAL:
+                match(LexicalUnit.EQUAL); break;
+            case GREATER:
+                match(LexicalUnit.GREATER); break;
+            case SMALLER:
+                match(LexicalUnit.SMALLER); break;
+            default:
+                error(tok); break;
+        }
+    }
+
+    void exprArith() {
+        prod();
+        exprArithPrime();
+    }
+
+    void exprArithPrime() {
+        Symbol tok = nextToken();
+        switch(tok.getType()) {
+            case EQUAL:
+            case GREATER:
+            case SMALLER:
+            case RPAREN:
+            case COMMA:
+                return;
+            case PLUS:
+                match(LexicalUnit.PLUS);
+                prod();
+                exprArithPrime();
+                break;
+            case MINUS:
+                match(LexicalUnit.MINUS);
+                prod();
+                exprArithPrime();
+                break;
+            default:
+                error(tok); break;
+        }   
+
+    }
+
     void if_() {}
     void while_() {}
     void print_() {}
     void read_() {}
+    void prod() {}
 
     public static void main(String[] args) {
 

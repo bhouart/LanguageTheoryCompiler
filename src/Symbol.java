@@ -71,6 +71,10 @@ public class Symbol{
 	}
 
     public String toTexString() {
-        return null;
-    }
+		if (this.isNonTerminal()) {
+			return "\\_" + String.valueOf(value) + "\\_";
+		} else {
+			return String.valueOf(value);
+		}
+	}
 }

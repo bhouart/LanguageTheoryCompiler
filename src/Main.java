@@ -63,11 +63,12 @@ public class Main{
             System.out.println(e);
         }
 
-        /*
+        
         ParseTree tree = p.getTree();
-        System.out.println(tree.toLaTeX());
+        //System.out.println(tree.toLaTeX());
+        tree.exportTexFile(tree.toLaTeX());
         System.out.println("fini");
-         */
+         
         System.out.println("Rules sequence : ");
         String sequence = "";
         for (Integer i : p.getRuleSequence()) {

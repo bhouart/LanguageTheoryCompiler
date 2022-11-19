@@ -71,8 +71,8 @@ public class Symbol{
 	}
 
     public String toTexString() {
-		if (this.isNonTerminal()) {
-			return "\\_" + String.valueOf(value) + "\\_";
+		if (this.isTerminal()) {
+			return "\\textcolor{red}{" + String.valueOf(value) + "}";
 		} else {
 			return String.valueOf(value);
 		}

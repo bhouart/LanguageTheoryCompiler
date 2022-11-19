@@ -1,5 +1,7 @@
 import java.util.List;
 import java.util.ArrayList;
+import java.io.FileNotFoundException;
+import java.io.PrintWriter;
 
 /**
  * A skeleton class to represent parse trees. The arity is not fixed: a node can
@@ -109,5 +111,11 @@ public class ParseTree {
     public String toLaTeX() {
         return "\\documentclass[border=5pt]{standalone}\n\n\\usepackage{tikz}\n\\usepackage{forest}\n\n\\begin{document}\n\n"
                 + toForestPicture() + "\n\n\\end{document}\n%% Local Variables:\n%% TeX-engine: pdflatex\n%% End:";
+    }
+
+    public void exportTexFile(String laTexString) throws FileNotFoundException{
+        PrintWriter writer = new PrintWriter("filename.tex");
+        writer.write(laTexString);
+        writer.close();
     }
 }

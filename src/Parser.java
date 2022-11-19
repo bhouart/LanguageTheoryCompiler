@@ -2,6 +2,7 @@ import java.util.ArrayList;
 
 public class Parser {
     private ArrayList<Symbol> symbolList;
+    private ArrayList<Integer> ruleSequence = new ArrayList<>();
     private ParseTree root;
     void match(LexicalUnit lu, ParseTree node) throws Exception {
         Symbol s = symbolList.get(0);
@@ -21,9 +22,14 @@ public class Parser {
         return this.root;
     }
 
+    public ArrayList<Integer> getRuleSequence() {
+        return this.ruleSequence;
+    }
+
 
     void program() throws Exception {
         root = new ParseTree(new Symbol(null, "Program"));
+        ruleSequence.add(1);
         match(LexicalUnit.BEGIN, root);
         match(LexicalUnit.PROGNAME, root);
         code(root);
@@ -36,11 +42,13 @@ public class Parser {
         switch(tok.getType()) {
             case END:
             case ELSE:
+                ruleSequence.add(3);
                 return;
         }
         // else
         ParseTree node = new ParseTree(new Symbol(null, "Code"));
         father.addChild(node);
+        ruleSequence.add(2);
         instruction(node);
         match(LexicalUnit.COMMA, node);
         code(node);
@@ -52,14 +60,19 @@ public class Parser {
         Symbol tok = nextToken();
         switch (tok.getType()) {
             case VARNAME:
+                ruleSequence.add(4);
                 assign(node); break;
             case IF:
+                ruleSequence.add(5);
                 if_(node); break;
             case WHILE:
+                ruleSequence.add(6);
                 while_(node); break;
             case PRINT:
+                ruleSequence.add(7);
                 print_(node); break;
             case READ:
+                ruleSequence.add(8);
                 read_(node); break;
             default:
                 error(tok); break;
@@ -69,6 +82,7 @@ public class Parser {
     void assign(ParseTree father) throws Exception {
         ParseTree node = new ParseTree(new Symbol(null, "Assign"));
         father.addChild(node);
+        ruleSequence.add(9);
         match(LexicalUnit.VARNAME, node);
         match(LexicalUnit.ASSIGN, node);
         exprArith(node);
@@ -77,6 +91,7 @@ public class Parser {
     void cond(ParseTree father) throws Exception {
         ParseTree node = new ParseTree(new Symbol(null, "Cond"));
         father.addChild(node);
+        ruleSequence.add(10);
         exprArith(node);
         comp(node);
         exprArith(node);
@@ -88,10 +103,13 @@ public class Parser {
         Symbol tok = nextToken();
         switch (tok.getType()) {
             case EQUAL:
+                ruleSequence.add(11);
                 match(LexicalUnit.EQUAL, node); break;
             case GREATER:
+                ruleSequence.add(12);
                 match(LexicalUnit.GREATER, node); break;
             case SMALLER:
+                ruleSequence.add(13);
                 match(LexicalUnit.SMALLER, node); break;
             default:
                 error(tok); break;
@@ -101,6 +119,7 @@ public class Parser {
     void exprArith(ParseTree father) throws Exception {
         ParseTree node = new ParseTree(new Symbol(null, "ExprArith"));
         father.addChild(node);
+        ruleSequence.add(14);
         prod(node);
         exprArithPrime(node);
     }
@@ -115,15 +134,18 @@ public class Parser {
             case SMALLER:
             case RPAREN:
             case COMMA:
+                ruleSequence.add(17);
                 return;
             case PLUS:
                 father.addChild(node);
+                ruleSequence.add(15);
                 match(LexicalUnit.PLUS, node);
                 prod(node);
                 exprArithPrime(node);
                 break;
             case MINUS:
                 father.addChild(node);
+                ruleSequence.add(16);
                 match(LexicalUnit.MINUS, node);
                 prod(node);
                 exprArithPrime(node);
@@ -137,7 +159,7 @@ public class Parser {
     void prod(ParseTree father) throws Exception {
         ParseTree node = new ParseTree(new Symbol(null, "Prod"));
         father.addChild(node);
-
+        ruleSequence.add(18);
         atom(node);
         prodPrime(node);
     }
@@ -153,14 +175,17 @@ public class Parser {
             case SMALLER:
             case RPAREN:
             case COMMA:
+                ruleSequence.add(21);
                 return;
             case TIMES:
                 father.addChild(node);
+                ruleSequence.add(19);
                 match(LexicalUnit.TIMES, node);
                 atom(node);
                 prodPrime(node);
                 break;
             case DIVIDE:
+                ruleSequence.add(20);
                 father.addChild(node);
                 match(LexicalUnit.DIVIDE, node);
                 atom(node);
@@ -178,18 +203,22 @@ public class Parser {
         Symbol tok = nextToken();
         switch (tok.getType()) {
             case MINUS:
+                ruleSequence.add(22);
                 match(LexicalUnit.MINUS, node);
                 atom(node);
                 break;
             case LPAREN:
+                ruleSequence.add(23);
                 match(LexicalUnit.LPAREN, node);
                 exprArith(node);
                 match(LexicalUnit.RPAREN, node);
                 break;
             case VARNAME:
+                ruleSequence.add(24);
                 match(LexicalUnit.VARNAME, node);
                 break;
             case NUMBER:
+                ruleSequence.add(25);
                 match(LexicalUnit.NUMBER, node);
                 break;
             default:
@@ -201,7 +230,7 @@ public class Parser {
     void if_(ParseTree father) throws Exception {
         ParseTree node = new ParseTree(new Symbol(null, "If"));
         father.addChild(node);
-
+        ruleSequence.add(26);
         match(LexicalUnit.IF, node);
         match(LexicalUnit.LPAREN, node);
         cond(node);
@@ -217,9 +246,11 @@ public class Parser {
         Symbol tok = nextToken();
         switch (tok.getType()) {
             case END:
+                ruleSequence.add(27);                
                 match(LexicalUnit.END, node);
                 break;
             case ELSE:
+                ruleSequence.add(28);
                 match(LexicalUnit.ELSE, node);
                 code(node);
                 match(LexicalUnit.END, node);
@@ -232,6 +263,7 @@ public class Parser {
     void while_(ParseTree father) throws Exception {
         ParseTree node = new ParseTree(new Symbol(null, "While"));
         father.addChild(node);
+        ruleSequence.add(29);
         match(LexicalUnit.WHILE, node);
         match(LexicalUnit.LPAREN, node);
         cond(node);
@@ -244,6 +276,7 @@ public class Parser {
     void print_(ParseTree father) throws Exception {
         ParseTree node = new ParseTree(new Symbol(null, "Print"));
         father.addChild(node);
+        ruleSequence.add(30);
         match(LexicalUnit.PRINT, node);
         match(LexicalUnit.LPAREN, node);
         match(LexicalUnit.VARNAME, node);
@@ -252,6 +285,7 @@ public class Parser {
     void read_(ParseTree father) throws Exception {
         ParseTree node = new ParseTree(new Symbol(null, "Read"));
         father.addChild(node);
+        ruleSequence.add(31);
         match(LexicalUnit.READ, node);
         match(LexicalUnit.LPAREN, node);
         match(LexicalUnit.VARNAME, node);

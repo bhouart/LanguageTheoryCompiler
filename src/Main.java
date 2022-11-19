@@ -63,14 +63,18 @@ public class Main{
             System.out.println(e);
         }
 
+        /*
         ParseTree tree = p.getTree();
         System.out.println(tree.toLaTeX());
         System.out.println("fini");
-        /*
-        System.out.println(tree.getLabel().toString());
-        for (ParseTree t : tree.getChildren()) {
-            System.out.println(t.getLabel().toString());
-        }*/
+         */
+        System.out.println("Rules sequence : ");
+        String sequence = "";
+        for (Integer i : p.getRuleSequence()) {
+            sequence += String.valueOf(i) + ' ';
+        }
+        System.out.println(sequence);
+
 
     }   
 }

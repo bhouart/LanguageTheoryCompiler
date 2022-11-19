@@ -3,4 +3,7 @@ bin
 out/*
 *.iml
 dist/*
-*.class
+**.class
+bin/*
+bin/LexicalAnalyzer.class
+.gitignore

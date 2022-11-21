@@ -66,7 +66,7 @@ public class Main{
         
         ParseTree tree = p.getTree();
         //System.out.println(tree.toLaTeX());
-        tree.exportTexFile(tree.toLaTeX());
+        tree.exportTexFile(tree.toLaTeX(), "filename.tex");
         System.out.println("fini");
          
         System.out.println("Rules sequence : ");

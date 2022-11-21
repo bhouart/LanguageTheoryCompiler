@@ -6,3 +6,6 @@ all:
 
 testing:
 	java -jar dist/part1.jar test/Factorial.fs
+
+testFibo:
+	java -jar dist/part1.jar test/Fibo.fs

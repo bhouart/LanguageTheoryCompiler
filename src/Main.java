@@ -27,14 +27,15 @@ public class Main{
     public static void main(String[] args) throws FileNotFoundException, IOException, SecurityException{
         Parser p = new Parser();
         // Display the usage when the number of arguments is wrong (should be 1)
-        if(args.length != 1){
+        if(args.length < 1){
             System.out.println("Usage:  java -jar part1.jar file.fs\n"
                              + "or\tjava "+Main.class.getSimpleName()+" file.fs");
             System.exit(0);
         }
+        System.out.println(args.length);
 
         // Open the file given in argument
-        FileReader source = new FileReader(args[0]);
+        FileReader source = new FileReader(args[args.length - 1]);
         final LexicalAnalyzer analyzer = new LexicalAnalyzer(source);
 
         ArrayList<Symbol> symbolList = new ArrayList();
@@ -65,9 +66,10 @@ public class Main{
 
         
         ParseTree tree = p.getTree();
-        //System.out.println(tree.toLaTeX());
-        tree.exportTexFile(tree.toLaTeX(), "filename.tex");
-        System.out.println("fini");
+        if(args.length > 1){
+                    tree.exportTexFile(tree.toLaTeX(), args[1]);
+        }
+
          
         System.out.println("Rules sequence : ");
         String sequence = "";

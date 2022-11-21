@@ -5,7 +5,7 @@ all:
 #	javadoc -private src/Main.java -d doc/javadoc
 
 testing:
-	java -jar dist/part1.jar test/Factorial.fs
+	java -jar dist/part1.jar -wt Factorial.tex test/Factorial.fs
 
 testFibo:
 	java -jar dist/part1.jar test/Fibo.fs

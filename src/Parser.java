@@ -14,7 +14,7 @@ public class Parser {
         }
     }
     void error(Symbol s) throws Exception {
-        throw new Exception("UNEXPECTED TOKEN : " + s.toString());
+        throw new Exception("\nUNEXPECTED TOKEN AT LINE " + s.getLine() + " : \n" + s.toString()+ "\n");
     }
     Symbol nextToken() {return symbolList.get(0);}
 

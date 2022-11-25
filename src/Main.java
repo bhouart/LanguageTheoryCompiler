@@ -54,29 +54,26 @@ public class Main{
         }
         System.out.println("\nVariables");
         // Print the variables
-        for(Map.Entry<String, Symbol> variable : variablesTable.entrySet())
+        for(Map.Entry<String, Symbol> variable : variablesTable.entrySet()) {
             System.out.println(variable.getKey()+"\t"+(variable.getValue().getLine()));
-        System.out.println(symbolList.size());
+        }
+        
         try {
             p.run(symbolList);
+            
+            ParseTree tree = p.getTree();
+            if(args.length == 3 && args[1].equals("-wt")){
+                        tree.exportTexFile(tree.toLaTeX(), args[2]);
+            }
+            
+            System.out.println("\nRules sequence : ");
+            String sequence = "";
+            for (Integer i : p.getRuleSequence()) {
+                sequence += String.valueOf(i) + ' ';
+            }
+            System.out.println(sequence);
         } catch (Exception e) {
             System.out.println(e);
-        }
-
-        
-        ParseTree tree = p.getTree();
-        if(args.length == 3 && args[1].equals("-wt")){
-                    tree.exportTexFile(tree.toLaTeX(), args[2]);
-        }
-
-         
-        System.out.println("Rules sequence : ");
-        String sequence = "";
-        for (Integer i : p.getRuleSequence()) {
-            sequence += String.valueOf(i) + ' ';
-        }
-        System.out.println(sequence);
-
-
+        } 
     }   
 }

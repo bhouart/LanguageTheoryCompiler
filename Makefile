@@ -9,3 +9,6 @@ testing:
 
 testFibo:
 	java -jar dist/part1.jar test/Fibo.fs
+
+testOpe:
+	java -jar dist/part1.jar test/Operators.fs

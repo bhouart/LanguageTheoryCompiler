@@ -32,10 +32,9 @@ public class Main{
                              + "or\tjava "+Main.class.getSimpleName()+" file.fs");
             System.exit(0);
         }
-        System.out.println(args.length);
 
         // Open the file given in argument
-        FileReader source = new FileReader(args[args.length - 1]);
+        FileReader source = new FileReader(args[0]);
         final LexicalAnalyzer analyzer = new LexicalAnalyzer(source);
 
         ArrayList<Symbol> symbolList = new ArrayList();
@@ -66,8 +65,8 @@ public class Main{
 
         
         ParseTree tree = p.getTree();
-        if(args.length > 1){
-                    tree.exportTexFile(tree.toLaTeX(), args[1]);
+        if(args.length == 3 && args[1].equals("-wt")){
+                    tree.exportTexFile(tree.toLaTeX(), args[2]);
         }
 
          

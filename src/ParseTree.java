@@ -113,6 +113,12 @@ public class ParseTree {
                 + toForestPicture() + "\n\n\\end{document}\n%% Local Variables:\n%% TeX-engine: pdflatex\n%% End:";
     }
 
+    /**
+     * Writes the latex string in a file
+     * @param laTexString tree written in latex
+     * @param fileNameString name of the file 
+     * @throws FileNotFoundException
+     */
     public void exportTexFile(String laTexString, String fileNameString) throws FileNotFoundException{
         PrintWriter writer = new PrintWriter(fileNameString);
         writer.write(laTexString);

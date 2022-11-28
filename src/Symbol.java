@@ -1,3 +1,7 @@
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
 public class Symbol{
 	public static final int UNDEFINED_POSITION = -1;
 	public static final Object NO_VALUE = null;
@@ -5,6 +9,7 @@ public class Symbol{
 	private final LexicalUnit type;
 	private final Object value;
 	private final int line,column;
+	private final List<LexicalUnit> latexSymbolErrors = new ArrayList<>(Arrays.asList(LexicalUnit.GREATER, LexicalUnit.SMALLER)); 
 
 	public Symbol(LexicalUnit unit,int line,int column,Object value){
     this.type	= unit;
@@ -72,7 +77,13 @@ public class Symbol{
 
     public String toTexString() {
 		if (this.isTerminal()) {
-			return "\\textcolor{red}{" + String.valueOf(value) + "}";
+			String val = "\\textcolor{red}{";
+			if (latexSymbolErrors.contains(this.type)) {
+				val += "$" + String.valueOf(value) + "$" + "}";
+			} else {
+				val += String.valueOf(value) + "}";
+			}
+			return val;
 		} else {
 			return String.valueOf(value);
 		}

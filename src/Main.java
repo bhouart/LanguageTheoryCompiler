@@ -34,7 +34,7 @@ public class Main{
         }
 
         // Open the file given in argument
-        FileReader source = new FileReader(args[0]);
+        FileReader source = new FileReader(args[args.length - 1]);
         final LexicalAnalyzer analyzer = new LexicalAnalyzer(source);
 
         ArrayList<Symbol> symbolList = new ArrayList();
@@ -62,8 +62,8 @@ public class Main{
             p.run(symbolList);
             
             ParseTree tree = p.getTree();
-            if(args.length == 3 && args[1].equals("-wt")){
-                        tree.exportTexFile(tree.toLaTeX(), args[2]);
+            if(args.length == 3 && args[0].equals("-wt")){
+                        tree.exportTexFile(tree.toLaTeX(), args[1]);
             }
             
             System.out.println("\nRules sequence : ");

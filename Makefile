@@ -8,7 +8,10 @@ testing:
 	java -jar dist/part1.jar -wt Factorial.tex test/Factorial.fs
 
 testFibo:
-	java -jar dist/part1.jar test/Fibo.fs
+	java -jar dist/part1.jar -wt Fibo.tex test/Fibo.fs
 
 testOpe:
-	java -jar dist/part1.jar test/Operators.fs
+	java -jar dist/part1.jar -wt Operators.tex test/Operators.fs
+
+javadoc:
+	cd src && javadoc -d ../doc/javadoc *.java

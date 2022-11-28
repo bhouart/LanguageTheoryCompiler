@@ -43,7 +43,6 @@ public class Main{
         Symbol symbol = null;
         // We iterate while we do not reach the end of the file (marked by EOS)
         while(!(symbol = analyzer.nextToken()).getType().equals(LexicalUnit.EOS)){
-            System.out.println(symbol.toString());
             symbolList.add(symbol);
             // If it is a variable, add it to the table
             if(symbol.getType().equals(LexicalUnit.VARNAME)){
@@ -51,11 +50,6 @@ public class Main{
                     variablesTable.put(symbol.getValue().toString(),symbol);
                 }
             }
-        }
-        System.out.println("\nVariables");
-        // Print the variables
-        for(Map.Entry<String, Symbol> variable : variablesTable.entrySet()) {
-            System.out.println(variable.getKey()+"\t"+(variable.getValue().getLine()));
         }
         
         try {
@@ -66,7 +60,6 @@ public class Main{
                         tree.exportTexFile(tree.toLaTeX(), args[1]);
             }
             
-            System.out.println("\nRules sequence : ");
             String sequence = "";
             for (Integer i : p.getRuleSequence()) {
                 sequence += String.valueOf(i) + ' ';

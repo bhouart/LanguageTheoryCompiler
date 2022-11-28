@@ -40,12 +40,12 @@ public class ParseTree {
         this.children = chdn;
     }
 
+    /**
+     * Adds a child to the node
+     * @param child child to attach
+     */
     public void addChild(ParseTree child) {
         this.children.add(child);
-    }
-    public List<ParseTree> getChildren() {return this.children;}
-    public Symbol getLabel() {
-        return this.label;
     }
 
     /**

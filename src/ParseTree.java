@@ -60,12 +60,12 @@ public class ParseTree {
         this.children = children;
     }
 
-    public void setChildIndex(ParseTree child, Integer i) {
-        children.set(i, child);
+    public void setChildIndex(ParseTree child, int i) {
+        this.children.set(i, child);
     }
 
-    public void removeChildIndex(Integer i) {
-        children.remove(i);
+    public void removeChildIndex(int i) {
+        this.children.remove(i);
     }
     /**
      * Writes the tree as LaTeX code

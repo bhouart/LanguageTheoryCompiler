@@ -63,6 +63,10 @@ public class ParseTree {
     public void setChildIndex(ParseTree child, Integer i) {
         children.set(i, child);
     }
+
+    public void removeChildIndex(Integer i) {
+        children.remove(i);
+    }
     /**
      * Writes the tree as LaTeX code
      */

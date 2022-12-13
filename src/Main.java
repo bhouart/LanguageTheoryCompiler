@@ -83,14 +83,9 @@ public class Main{
         List<ParseTree> children = child.getChildren();
 
         Boolean changed = false;
-        if (child.getSymbol().getValue() == "Prod") {   
-            if (children.size() == 1) {
-                changed = true;
-                father.setChildIndex(children.get(0), index);
-            }
-        }
 
-        else if (child.getSymbol().getValue() == "Atom") {
+
+        if (child.getSymbol().getValue() == "Atom") {
             
             if (children.size() == 1) {
                 changed = true;
@@ -101,14 +96,34 @@ public class Main{
                 ope.addChild(new ParseTree(new Symbol(LexicalUnit.NUMBER, "-1")));
                 ope.addChild(children.get(1));
                 father.setChildIndex(ope, index);
-            } /*else if (children.size() == 3) {
-                changed = true;
-                List<ParseTree> petiteFamille = new ArrayList<>();
-                petiteFamille.add(children.get(1));
-                father.setChildren(petiteFamille);
-            }*/
+            } else if (children.size() == 3) {
+                    
+                    changed = true;
+                    
+                    father.setChildIndex(children.get(1), index);
+                    
+            }
         }
+        else if (child.getSymbol().getValue() == "Prod") {   
+            changed = true;
+            if (children.size() == 1) {
+                father.setChildIndex(children.get(0), index);
+            } else {
+                List<ParseTree> childrenPrime = children.get(1).getChildren();
+                ParseTree ope = childrenPrime.remove(0);    // * /
 
+                List<ParseTree> grandeFamille = new ArrayList<ParseTree>();
+                grandeFamille.add(children.get(0));
+                grandeFamille.addAll(childrenPrime);
+
+                ope.setChildren(grandeFamille);
+
+                father.setChildIndex(ope, index); 
+            }
+
+
+
+        }
         else if (child.getSymbol().getValue() == "ExprArith") {
             changed = true;
             if (children.size() == 1) {

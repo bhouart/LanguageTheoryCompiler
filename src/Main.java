@@ -3,6 +3,8 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.TreeMap;
 import java.util.Map;
 
@@ -56,6 +58,8 @@ public class Main{
             p.run(symbolList);
             
             ParseTree tree = p.getTree();
+            ParseTree newTree = new ParseTree(tree.getSymbol());
+            clean(tree, newTree);
             if(args.length == 3 && args[0].equals("-wt")){
                         tree.exportTexFile(tree.toLaTeX(), args[1]);
             }
@@ -68,5 +72,90 @@ public class Main{
         } catch (Exception e) {
             System.out.println(e);
         } 
+
+
+
     }   
+
+
+
+    private static Boolean cleanSymbol(ParseTree father, ParseTree child, Integer index) {
+        List<ParseTree> children = child.getChildren();
+
+        Boolean changed = false;
+        if (child.getSymbol().getValue() == "Prod") {   
+            if (children.size() == 1) {
+                changed = true;
+                father.setChildIndex(children.get(0), index);
+            }
+        }
+
+        else if (child.getSymbol().getValue() == "Atom") {
+            
+            if (children.size() == 1) {
+                changed = true;
+                father.setChildIndex(children.get(0), index);
+            } else if (children.size() == 2) {
+                changed = true;
+                ParseTree ope = new ParseTree(new Symbol(LexicalUnit.TIMES, "*"));
+                ope.addChild(new ParseTree(new Symbol(LexicalUnit.NUMBER, "-1")));
+                ope.addChild(children.get(1));
+                father.setChildIndex(ope, index);
+            } /*else if (children.size() == 3) {
+                changed = true;
+                List<ParseTree> petiteFamille = new ArrayList<>();
+                petiteFamille.add(children.get(1));
+                father.setChildren(petiteFamille);
+            }*/
+        }
+
+        else if (child.getSymbol().getValue() == "ExprArith") {
+            changed = true;
+            if (children.size() == 1) {
+                father.setChildIndex(children.get(0), index);
+            } else {
+                List<ParseTree> childrenPrime = children.get(1).getChildren();
+
+                
+                ParseTree ope = childrenPrime.remove(0);
+
+                //List<ParseTree> grandeFamille = Arrays.asList(children.get(0));
+                List<ParseTree> grandeFamille = new ArrayList<ParseTree>();
+                grandeFamille.add(children.get(0));
+                grandeFamille.addAll(childrenPrime);
+
+                ope.setChildren(grandeFamille);
+
+                father.setChildIndex(ope, index);  
+
+            }
+        }
+
+        return changed;
+    }
+
+
+    private static void clean(ParseTree tree, ParseTree newTree) {
+        List<ParseTree> children = tree.getChildren();
+        
+        
+        for (int i = 0; i < children.size(); i++) {
+            Boolean changed = cleanSymbol(tree, children.get(i), i);
+            while (changed) {
+                changed = cleanSymbol(tree, children.get(i), i);
+            }
+        }
+
+        for (ParseTree child : tree.getChildren()) {
+            clean(child, newTree);
+        }
+    }
+
+
+
+
+
+
+
+
 }

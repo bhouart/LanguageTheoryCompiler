@@ -48,6 +48,21 @@ public class ParseTree {
         this.children.add(child);
     }
 
+    public Symbol getSymbol() {
+        return label;
+    }
+
+    public List<ParseTree> getChildren() {
+        return children;
+    }
+
+    public void setChildren(List<ParseTree> children) {
+        this.children = children;
+    }
+
+    public void setChildIndex(ParseTree child, Integer i) {
+        children.set(i, child);
+    }
     /**
      * Writes the tree as LaTeX code
      */

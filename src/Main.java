@@ -58,7 +58,12 @@ public class Main{
             p.run(symbolList);
             
             ParseTree tree = p.getTree();
+            tree.removeChildIndex(3);
+            tree.removeChildIndex(1);
+            tree.removeChildIndex(0);
             clean(tree);
+            
+            
             if(args.length == 3 && args[0].equals("-wt")){
                         tree.exportTexFile(tree.toLaTeX(), args[1]);
             }
@@ -118,7 +123,11 @@ public class Main{
                 grandeFamille.addAll(childrenPrime);
 
                 ope.setChildren(grandeFamille);
-                father.setChildIndex(ope, index); 
+                
+                while (ope.getChildren().size() == 3) {
+                    ope = reducePrime(ope);
+                }
+                father.setChildIndex(ope, index);                
             }
         }
 
@@ -138,6 +147,10 @@ public class Main{
                 grandeFamille.addAll(childrenPrime);
 
                 ope.setChildren(grandeFamille);
+                while (ope.getChildren().size() == 3) {
+                    ope = reducePrime(ope);
+                }
+
                 father.setChildIndex(ope, index);  
             }
         } 
@@ -149,9 +162,81 @@ public class Main{
             }    
         }
 
+        else if (child.getSymbol().getValue() == "Read") { 
+            if (child.getChildren().size() == 4) {
+                List<ParseTree> newList = Arrays.asList(child.getChildren().get(2));
+                child.setChildren(newList);
+            }
+            
+        }
+
+        else if (child.getSymbol().getValue() == "Print") {
+            if (child.getChildren().size() == 4) {
+                List<ParseTree> newList = Arrays.asList(child.getChildren().get(2));
+                child.setChildren(newList);
+            }
+        }
+         
+        else if (child.getSymbol().getValue() == "Instruction") {
+            changed = true;
+            father.setChildIndex(child.getChildren().get(0), index);
+        }
+
+        else if (child.getSymbol().getValue() == "Code") {
+            changed = true;
+            father.setChildIndex(children.get(0), index);
+
+            if (children.size() == 3) {
+                ParseTree tmp = children.get(2);
+                father.insertChildIndex(tmp, index+1);
+            }
+
+        }
+
+        else if (child.getSymbol().getValue() == "If") {
+            child.removeChildIndex(4);
+            child.removeChildIndex(3);
+            child.removeChildIndex(1);
+            child.removeChildIndex(0);
+        }
+
+        else if (child.getSymbol().getValue() == "Comp") {
+            father.setChildIndex(child.getChildren().get(0), index);
+        }
+
+        else if (child.getSymbol().getValue() == "While") {
+            child.removeChildIndex(children.size() - 1);
+            child.removeChildIndex(4);
+            child.removeChildIndex(3);
+            child.removeChildIndex(1);
+            child.removeChildIndex(0);
+        }
+
+        else if (child.getSymbol().getValue() == "IfSeq") {
+            if (children.size() == 1) {
+                father.removeChildIndex(index);
+            } else {
+                child.removeChildIndex(children.size() - 1);
+                child.removeChildIndex(0);
+            }
+
+        }
+
+
         return changed;
     }
 
+
+    private static ParseTree reducePrime(ParseTree prev) {
+        List<ParseTree> familleMoyenne = prev.getChildren().get(2).getChildren();
+        prev.removeChildIndex(2);
+        ParseTree newOpe = familleMoyenne.remove(0);
+        List<ParseTree> newChildren = new ArrayList<>();
+        newChildren.add(prev);
+        newChildren.addAll(familleMoyenne);
+        newOpe.setChildren(newChildren);
+        return newOpe;
+    }
 
     private static void clean(ParseTree tree) {
         List<ParseTree> children = tree.getChildren();

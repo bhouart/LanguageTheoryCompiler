@@ -45,7 +45,7 @@ public class ParseTree {
      * @param child child to attach
      */
     public void addChild(ParseTree child) {
-        this.children.add(child);
+        children.add(child);
     }
 
     public Symbol getSymbol() {
@@ -62,6 +62,10 @@ public class ParseTree {
 
     public void setChildIndex(ParseTree child, int i) {
         this.children.set(i, child);
+    }
+
+    public void insertChildIndex(ParseTree child, int i) {
+        this.children.add(i, child);
     }
 
     public void removeChildIndex(int i) {

@@ -163,9 +163,16 @@ public class CodeGenerator {
     }
 
     private String number(ParseTree number) {
-        code += "\n    store i32 " + number.getSymbol().getValue().toString() + ", i32* @tmp";
         String tmpVar = getTmpVar();
-        code += "\n    " + tmpVar + " = load i32, i32* @tmp";
-        return tmpVar;
+        if (number.getSymbol().getType() == LexicalUnit.NUMBER) {
+            code += "\n    store i32 " + number.getSymbol().getValue().toString() + ", i32* @tmp";
+            code += "\n    " + tmpVar + " = load i32, i32* @tmp";
+            return tmpVar;
+        } else {
+
+            code += "\n    " + tmpVar + " = load i32, i32* %" + number.getSymbol().getValue().toString();
+            return tmpVar;
+        }
+
     }
 }

@@ -17,9 +17,11 @@ public class CodeGenerator {
             switch (instruct.getSymbol().getValue().toString()) {
                 case "Assign":
                     assignInstruct(instruct);
+                    code += "\n";
                     break;
                 case "Read":
                     readInstruct(instruct);
+                    code += "\n";
                     break;
                 case "Print":
                 case "If":
@@ -29,11 +31,16 @@ public class CodeGenerator {
         System.out.println(code);
     }
 
+    private String getTmpVar() {
+        String tmpVar = "%" + Integer.toString(varCounter);
+        varCounter += 1;
+        return tmpVar;
+    }
+
     private void readInstruct(ParseTree instruct) {
         String left = assignLeft(instruct.getChildren().get(0));
 
-        String tmpVar = "%" + Integer.toString(varCounter);
-        varCounter += 1; 
+        String tmpVar = getTmpVar();
         code += "\n    " + tmpVar + " = call i32 @readInt()";
         code += "\n    store i32 " + tmpVar + ", i32* " + left;             
     }
@@ -69,8 +76,7 @@ public class CodeGenerator {
             case VARNAME:
                 String varname = assignRight.getSymbol().getValue().toString();
                 if (declaredVars.contains(varname)) {
-                    String tmpVar = "%" + Integer.toString(varCounter);
-                    varCounter += 1;
+                    String tmpVar = getTmpVar();
                     code += "\n    " + tmpVar + " = load i32, i32* %" + varname; 
                     return tmpVar;
                 } else {
@@ -90,8 +96,7 @@ public class CodeGenerator {
             String left = operator(children.get(0));
             String right = operator(children.get(1));
 
-            String tmpVar = "%" + Integer.toString(varCounter);
-            varCounter += 1;
+            String tmpVar = getTmpVar();
             
             String opeFunc = "";
             switch(ope.getSymbol().getType()) {
@@ -116,8 +121,7 @@ public class CodeGenerator {
 
     private String number(ParseTree number) {
         code += "\n    store i32 " + number.getSymbol().getValue().toString() + ", i32* @tmp";
-        String tmpVar = "%" + Integer.toString(varCounter);
-        varCounter += 1;
+        String tmpVar = getTmpVar();
         code += "\n    " + tmpVar + " = load i32, i32* @tmp";
         return tmpVar;
     }

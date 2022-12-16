@@ -62,6 +62,8 @@ public class Main{
             tree.removeChildIndex(1);
             tree.removeChildIndex(0);
             clean(tree);
+            CodeGenerator cg = new CodeGenerator(tree);
+            cg.generate();
             
             
             if(args.length == 3 && args[0].equals("-wt")){

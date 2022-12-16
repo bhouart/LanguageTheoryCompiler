@@ -17,7 +17,10 @@ public class CodeGenerator {
             switch (instruct.getSymbol().getValue().toString()) {
                 case "Assign":
                     assignInstruct(instruct);
+                    break;
                 case "Read":
+                    readInstruct(instruct);
+                    break;
                 case "Print":
                 case "If":
                 case "While":
@@ -25,6 +28,16 @@ public class CodeGenerator {
         }
         System.out.println(code);
     }
+
+    private void readInstruct(ParseTree instruct) {
+        String left = assignLeft(instruct.getChildren().get(0));
+
+        String tmpVar = "%" + Integer.toString(varCounter);
+        varCounter += 1; 
+        code += "\n    " + tmpVar + " = call i32 @readInt()";
+        code += "\n    store i32 " + tmpVar + ", i32* " + left;             
+    }
+
 
     private void assignInstruct(ParseTree instruct) throws Exception {
         List<ParseTree> children = instruct.getChildren();
@@ -39,6 +52,7 @@ public class CodeGenerator {
         String codeVar = "%"+varName;
         if (!declaredVars.contains(varName)) {
             code += "\n    " + codeVar + " = alloca i32";
+            declaredVars.add(varName);
         }
         return codeVar;
     }

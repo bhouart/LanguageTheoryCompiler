@@ -74,7 +74,7 @@ public class Main{
             for (Integer i : p.getRuleSequence()) {
                 sequence += String.valueOf(i) + ' ';
             }
-            System.out.println(sequence);
+            //System.out.println(sequence);
         } catch (Exception e) {
             System.out.println(e);
         } 

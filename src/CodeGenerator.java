@@ -6,13 +6,39 @@ public class CodeGenerator {
     private ParseTree tree;
     private int varCounter = 1;
     private List<String> declaredVars = new ArrayList<String>();
-    private String code = "";
+    private String code;
     
     public CodeGenerator(ParseTree ast) {
         this.tree = ast;
+        setInitialCode();
+    }
+
+    private void setInitialCode(){
+        code = """
+        @.strP = private unnamed_addr constant [4 x i8] c\"%d\\0A\\00\", align 1
+
+        define void @println(i32 %x) {
+            %1 = alloca i32, align 4
+            store i32 %x, i32* %1, align 4
+            %2 = load i32, i32* %1, align 4
+            %3 = call i32 (i8*, ...) @printf(i8* getelementptr inbounds ([4 x i8], [4 x i8]* @.strP, i32 0, i32 0), i32 %2)
+            ret void
+        }
+        declare i32 @printf(i8*, ...)""" + 
+
+        """
+        @.strR = private unnamed_addr constant [3 x i8] c\"%d\\00\", align 1
+        ; Function Attrs: nounwind uwtable
+        define i32 @readInt() #0 {
+            %x = alloca i32, align 4
+            %1 = call i32 (i8*, ...) @__isoc99_scanf(i8* getelementptr inbounds ([3 x i8], [3 x i8]* @.strR, i32 0, i32 0), i32* %x)
+            %2 = load i32, i32* %x, align 4
+            ret i32 %2
+        }""";
     }
 
     public void generate() throws Exception {
+        code += "\n define i32 @main(){";
         for (ParseTree instruct : tree.getChildren()) {
             switch (instruct.getSymbol().getValue().toString()) {
                 case "Assign":
@@ -24,10 +50,12 @@ public class CodeGenerator {
                     code += "\n";
                     break;
                 case "Print":
+                printInstruct(instruct);
                 case "If":
                 case "While":
             }
         }
+        code += "\n    ret i32 0}";
         System.out.println(code);
     }
 
@@ -43,6 +71,16 @@ public class CodeGenerator {
         String tmpVar = getTmpVar();
         code += "\n    " + tmpVar + " = call i32 @readInt()";
         code += "\n    store i32 " + tmpVar + ", i32* " + left;             
+    }
+
+    private void printInstruct(ParseTree instruct) throws Exception{
+        String varName = instruct.getChildren().get(0).getSymbol().getValue().toString();
+        if (declaredVars.contains(varName)) {
+            code += "\n   call void @println(i32 %" + varName + ")";
+        }
+        else{
+            throw new Exception("Unknown variable : " + varName);
+        }
     }
 
 
@@ -74,13 +112,13 @@ public class CodeGenerator {
             case NUMBER:
                 return number(assignRight);
             case VARNAME:
-                String varname = assignRight.getSymbol().getValue().toString();
-                if (declaredVars.contains(varname)) {
+                String varName = assignRight.getSymbol().getValue().toString();
+                if (declaredVars.contains(varName)) {
                     String tmpVar = getTmpVar();
-                    code += "\n    " + tmpVar + " = load i32, i32* %" + varname; 
+                    code += "\n    " + tmpVar + " = load i32, i32* %" + varName; 
                     return tmpVar;
                 } else {
-                    throw new Exception("Unknown variable : " + varname);
+                    throw new Exception("Unknown variable : " + varName);
                 }            
         }
         return "";  // never happens

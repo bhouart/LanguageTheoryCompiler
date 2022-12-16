@@ -40,7 +40,8 @@ public class CodeGenerator {
     }
 
     public void generate() throws Exception {
-        code += "\n define i32 @main(){";
+        code += "\n@tmp = global i32 0";
+        code += "\ndefine i32 @main(){";
         for (ParseTree instruct : tree.getChildren()) {
             switch (instruct.getSymbol().getValue().toString()) {
                 case "Assign":
@@ -57,7 +58,7 @@ public class CodeGenerator {
                 case "While":
             }
         }
-        code += "\n    ret i32 0}";
+        code += "\n    ret i32 0\n}";
         System.out.println(code);
     }
 
@@ -79,8 +80,8 @@ public class CodeGenerator {
         String varName = instruct.getChildren().get(0).getSymbol().getValue().toString();
         if (declaredVars.contains(varName)) {
             String tmpVar = getTmpVar();
-            code += "\n   " + tmpVar + " = load i32, i32* " + varName;
-            code += "\n   call void @println(i32 %" + tmpVar + ")";
+            code += "\n   " + tmpVar + " = load i32, i32* %" + varName;
+            code += "\n   call void @println(i32 " + tmpVar + ")";
         }
         else{
             throw new Exception("Unknown variable : " + varName);

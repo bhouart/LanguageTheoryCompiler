@@ -78,7 +78,9 @@ public class CodeGenerator {
     private void printInstruct(ParseTree instruct) throws Exception{
         String varName = instruct.getChildren().get(0).getSymbol().getValue().toString();
         if (declaredVars.contains(varName)) {
-            code += "\n   call void @println(i32 %" + varName + ")";
+            String tmpVar = getTmpVar();
+            code += "\n   " + tmpVar + " = load i32, i32* " + varName;
+            code += "\n   call void @println(i32 %" + tmpVar + ")";
         }
         else{
             throw new Exception("Unknown variable : " + varName);

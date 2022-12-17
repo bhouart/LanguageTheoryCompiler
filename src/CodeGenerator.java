@@ -7,6 +7,7 @@ public class CodeGenerator {
     private int varCounter = 1;
     private List<String> declaredVars = new ArrayList<String>();
     private String code;
+    private int ifLabelCounter = 0;
     
     public CodeGenerator(ParseTree ast) {
         this.tree = ast;
@@ -42,7 +43,21 @@ public class CodeGenerator {
     public void generate() throws Exception {
         code += "\n@tmp = global i32 0";
         code += "\ndefine i32 @main(){";
-        for (ParseTree instruct : tree.getChildren()) {
+
+        loopInstruct(tree.getChildren());
+        
+        code += "\n    ret i32 0\n}";
+        System.out.println(code);
+    }
+
+    private String getTmpVar() {
+        String tmpVar = "%" + Integer.toString(varCounter);
+        varCounter += 1;
+        return tmpVar;
+    }
+
+    private void loopInstruct(List<ParseTree> instructs) throws Exception {
+        for (ParseTree instruct : instructs) {
             switch (instruct.getSymbol().getValue().toString()) {
                 case "Assign":
                     assignInstruct(instruct);
@@ -53,20 +68,70 @@ public class CodeGenerator {
                     code += "\n";
                     break;
                 case "Print":
-                printInstruct(instruct);
+                    printInstruct(instruct);
+                    break;
                 case "If":
+                    ifInstruct(instruct);
+                    break;
                 case "While":
             }
         }
-        code += "\n    ret i32 0\n}";
-        System.out.println(code);
     }
 
-    private String getTmpVar() {
-        String tmpVar = "%" + Integer.toString(varCounter);
-        varCounter += 1;
+    private void ifInstruct(ParseTree instruct) throws Exception {
+        List<ParseTree> children = instruct.getChildren();
+        String boolVal = comparator(children.get(0));
+        String ifNumber = Integer.toString(ifLabelCounter);
+
+        ifLabelCounter += 1;
+
+        String jmp1;
+        String jmp2;
+
+        if (children.get(children.size() - 1).getChildren().size() == 0) {  // without else
+            jmp1 = "ifTrue" + ifNumber;
+            jmp2 = "ifEnd" + ifNumber;
+            
+        } else {    // with else
+            jmp1 = "ifTrue" + ifNumber;
+            jmp2 = "ifFalse" + ifNumber;
+        }
+        
+        code += "\n    br i1 " + boolVal + ", label %" + jmp1 + ", label %" + jmp2;
+        code += "\n    ifTrue" + ifNumber + ":";
+
+        loopInstruct(children.subList(1, children.size() - 1));
+        code += "\n    br label %ifEnd" + ifNumber;   // jump outside if
+
+        if (children.get(children.size() - 1).getChildren().size() !=0) {  // else
+            code += "\n    ifFalse" + ifNumber + ":";
+            loopInstruct(children.get(children.size() - 1).getChildren());
+            code += "\n    br label %ifEnd" + ifNumber;   // jump outside if
+        }
+        code += "\n    ifEnd" + ifNumber + ":";
+    }
+
+    private String comparator(ParseTree instruct) throws Exception {
+        List<ParseTree> children = instruct.getChildren();
+        String left = expr(children.get(0));
+        String right = expr(children.get(2));
+        String compString = ""; // never empty
+        switch(children.get(1).getSymbol().getType()){
+            case EQUAL:
+                compString = "eq";
+                break;
+            case GREATER:
+                compString = "sgt";
+                break;
+            case SMALLER:
+                compString = "slt";
+                break;
+        }
+        String tmpVar = getTmpVar();
+        code += "\n    " + tmpVar + " = icmp " + compString + " i32 " + left + ", " + right;
         return tmpVar;
     }
+
 
     private void readInstruct(ParseTree instruct) {
         String left = assignLeft(instruct.getChildren().get(0));

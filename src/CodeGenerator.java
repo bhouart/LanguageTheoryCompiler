@@ -8,6 +8,7 @@ public class CodeGenerator {
     private List<String> declaredVars = new ArrayList<String>();
     private String code;
     private int ifLabelCounter = 0;
+    private int whileLabelCounter = 0;
     
     public CodeGenerator(ParseTree ast) {
         this.tree = ast;
@@ -74,9 +75,31 @@ public class CodeGenerator {
                     ifInstruct(instruct);
                     break;
                 case "While":
+                    whileInstrut(instruct);
+                    break;
+
             }
         }
     }
+
+    private void whileInstrut(ParseTree instruct) throws Exception {
+        List<ParseTree> children = instruct.getChildren();
+        
+        String whileNumber = Integer.toString(whileLabelCounter);
+        whileNumber += 1;
+
+        code += "\n    br label %whileCond" + whileNumber;
+        code += "\n    whileCond" + whileNumber + ":";
+        String boolVal = comparator(children.get(0));
+        code += "\n    br i1 " + boolVal + ", label %whileStart" + whileNumber + ", label %whileEnd" + whileNumber;
+
+        code += "\n    whileStart" + whileNumber + ":";
+        loopInstruct(children.subList(1, children.size()));
+
+        code += "\n    br label %whileCond" + whileNumber;
+        code += "\n    whileEnd" + whileNumber + ":";
+    }
+
 
     private void ifInstruct(ParseTree instruct) throws Exception {
         List<ParseTree> children = instruct.getChildren();

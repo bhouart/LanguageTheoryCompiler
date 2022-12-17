@@ -79,11 +79,7 @@ public class Main{
             System.out.println(e);
         } 
 
-
-
     }   
-
-
 
     private static Boolean cleanSymbol(ParseTree father, ParseTree child, int index) {
         List<ParseTree> children = child.getChildren();
@@ -223,8 +219,6 @@ public class Main{
             }
 
         }
-
-
         return changed;
     }
 
@@ -255,12 +249,4 @@ public class Main{
             clean(child);
         }
     }
-
-
-
-
-
-
-
-
 }

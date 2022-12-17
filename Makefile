@@ -15,3 +15,12 @@ testOpe:
 
 javadoc:
 	cd src && javadoc -d ../doc/javadoc *.java
+
+
+lltest:
+	java -jar dist/part2.jar -wt Factorial.tex test/Factorial.fs | tail -n +1 > tmp.ll
+	llvm-as tmp.ll
+
+llop:
+	java -jar dist/part2.jar -wt Operators.tex test/Operators.fs | tail -n +1 > tmp.ll
+	llvm-as tmp.ll

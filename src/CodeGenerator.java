@@ -113,31 +113,24 @@ public class CodeGenerator {
             case MINUS:
             case TIMES:
             case DIVIDE:
-                return operator(assignRight);
+                return expr(assignRight);
+
             case NUMBER:
-                return number(assignRight);
             case VARNAME:
-                String varName = assignRight.getSymbol().getValue().toString();
-                if (declaredVars.contains(varName)) {
-                    String tmpVar = getTmpVar();
-                    code += "\n    " + tmpVar + " = load i32, i32* %" + varName; 
-                    return tmpVar;
-                } else {
-                    throw new Exception("Unknown variable : " + varName);
-                }            
+                return singleValue(assignRight);
         }
         return "";  // never happens
     }
 
-    private String operator(ParseTree ope) {
+    private String expr(ParseTree ope) throws Exception {
         List<ParseTree> children = ope.getChildren();
 
-        if (children.size() == 0) { // number
-            return number(ope);
+        if (children.size() == 0) { // number or var
+            return singleValue(ope);
         }
         else {
-            String left = operator(children.get(0));
-            String right = operator(children.get(1));
+            String left = expr(children.get(0));
+            String right = expr(children.get(1));
 
             String tmpVar = getTmpVar();
             
@@ -162,16 +155,20 @@ public class CodeGenerator {
         }
     }
 
-    private String number(ParseTree number) {
+    private String singleValue(ParseTree number) throws Exception {
         String tmpVar = getTmpVar();
         if (number.getSymbol().getType() == LexicalUnit.NUMBER) {
             code += "\n    store i32 " + number.getSymbol().getValue().toString() + ", i32* @tmp";
             code += "\n    " + tmpVar + " = load i32, i32* @tmp";
             return tmpVar;
         } else {
-
-            code += "\n    " + tmpVar + " = load i32, i32* %" + number.getSymbol().getValue().toString();
-            return tmpVar;
+            String varName = number.getSymbol().getValue().toString();
+            if (declaredVars.contains(varName)) {
+                code += "\n    " + tmpVar + " = load i32, i32* %" + varName; 
+                return tmpVar;
+            } else {
+                throw new Exception("Unknown variable : " + varName);
+            } 
         }
 
     }

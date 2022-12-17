@@ -216,7 +216,7 @@ public class Main{
 
         else if (child.getSymbol().getValue() == "IfSeq") {
             if (children.size() == 1) {
-                father.removeChildIndex(index);
+                child.removeChildIndex(0);
             } else {
                 child.removeChildIndex(children.size() - 1);
                 child.removeChildIndex(0);

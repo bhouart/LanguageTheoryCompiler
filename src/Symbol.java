@@ -2,6 +2,9 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+/**
+ * Class that represent a symbol composed of LexicalUnit and associated value
+ */
 public class Symbol{
 	public static final int UNDEFINED_POSITION = -1;
 	public static final Object NO_VALUE = null;

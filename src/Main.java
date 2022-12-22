@@ -10,7 +10,7 @@ import java.util.Map;
 
 /**
  *
- * Project Part 1: Lexical Analyzer
+ * Main class that runs everything
  *
  * @author Sarah Winter, Marie Van Den Bogaard, Léo Exibard, Gilles Geeraerts
  *

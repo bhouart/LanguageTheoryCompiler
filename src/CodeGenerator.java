@@ -1,6 +1,9 @@
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Class that generates llvm code based on an abstract tree
+ */
 public class CodeGenerator {
 
     private ParseTree tree;
@@ -15,6 +18,9 @@ public class CodeGenerator {
         setInitialCode();
     }
 
+    /**
+     * Adds to code string some initialisation llvm code
+     */
     private void setInitialCode(){
         code = """
         @.strP = private unnamed_addr constant [4 x i8] c\"%d\\0A\\00\", align 1
@@ -41,6 +47,9 @@ public class CodeGenerator {
         declare i32 @__isoc99_scanf(i8*, ...) #1""";
     }
 
+    /**
+     * Start the code generation
+     */
     public void generate() throws Exception {
         code += "\n@tmp = global i32 0";
         code += "\ndefine i32 @main(){";
@@ -51,12 +60,18 @@ public class CodeGenerator {
         System.out.println(code);
     }
 
+    /*
+     * returns the next anonym variable
+     */
     private String getTmpVar() {
         String tmpVar = "%" + Integer.toString(varCounter);
         varCounter += 1;
         return tmpVar;
     }
 
+    /**
+     * Loop that evaluates a list of instruction 
+     */
     private void loopInstruct(List<ParseTree> instructs) throws Exception {
         for (ParseTree instruct : instructs) {
             switch (instruct.getSymbol().getValue().toString()) {
@@ -82,6 +97,9 @@ public class CodeGenerator {
         }
     }
 
+    /**
+     * Evaluates while instruction
+     */
     private void whileInstrut(ParseTree instruct) throws Exception {
         List<ParseTree> children = instruct.getChildren();
         
@@ -100,7 +118,9 @@ public class CodeGenerator {
         code += "\n    whileEnd" + whileNumber + ":";
     }
 
-
+    /**
+     * Evaluates if instruction
+     */
     private void ifInstruct(ParseTree instruct) throws Exception {
         List<ParseTree> children = instruct.getChildren();
         String boolVal = comparator(children.get(0));
@@ -134,6 +154,9 @@ public class CodeGenerator {
         code += "\n    ifEnd" + ifNumber + ":";
     }
 
+    /**
+     * Evaluates a comparison
+     */
     private String comparator(ParseTree instruct) throws Exception {
         List<ParseTree> children = instruct.getChildren();
         String left = expr(children.get(0));
@@ -155,7 +178,9 @@ public class CodeGenerator {
         return tmpVar;
     }
 
-
+    /**
+     * Evaluates read instruction
+     */
     private void readInstruct(ParseTree instruct) {
         String left = assignLeft(instruct.getChildren().get(0));
 
@@ -164,6 +189,9 @@ public class CodeGenerator {
         code += "\n    store i32 " + tmpVar + ", i32* " + left;             
     }
 
+    /**
+     * Evaluates print instruction
+     */
     private void printInstruct(ParseTree instruct) throws Exception{
         String varName = instruct.getChildren().get(0).getSymbol().getValue().toString();
         if (declaredVars.contains(varName)) {
@@ -176,7 +204,9 @@ public class CodeGenerator {
         }
     }
 
-
+    /**
+     * Evaluates assign instruction
+     */
     private void assignInstruct(ParseTree instruct) throws Exception {
         List<ParseTree> children = instruct.getChildren();
         String left = assignLeft(children.get(0));
@@ -185,6 +215,9 @@ public class CodeGenerator {
         code += "\n    store i32 " + right + ", i32* " + left;
     }
 
+    /**
+     * Evaluates left side of an assign instruction
+     */
     private String assignLeft(ParseTree assignLeft) {
         String varName = assignLeft.getSymbol().getValue().toString();
         String codeVar = "%"+varName;
@@ -195,6 +228,9 @@ public class CodeGenerator {
         return codeVar;
     }
 
+    /**
+     * Evaluates right side of an assign instruction
+     */
     private String assignRight(ParseTree assignRight) throws Exception {
         switch(assignRight.getSymbol().getType()) {
             case PLUS:
@@ -210,6 +246,9 @@ public class CodeGenerator {
         return "";  // never happens
     }
 
+    /**
+     * Evaluates expression recursively
+     */
     private String expr(ParseTree ope) throws Exception {
         List<ParseTree> children = ope.getChildren();
 
@@ -243,6 +282,9 @@ public class CodeGenerator {
         }
     }
 
+    /**
+     * Stores number or variable
+     */
     private String singleValue(ParseTree number) throws Exception {
         String tmpVar = getTmpVar();
         if (number.getSymbol().getType() == LexicalUnit.NUMBER) {

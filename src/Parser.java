@@ -1,5 +1,8 @@
 import java.util.ArrayList;
 
+/**
+ * Class that parses a list of tokens to build a syntax tree
+ */
 public class Parser {
     private ArrayList<Symbol> symbolList;
     private ArrayList<Integer> ruleSequence = new ArrayList<>();

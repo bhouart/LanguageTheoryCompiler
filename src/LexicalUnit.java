@@ -1,3 +1,6 @@
+/**
+ * Contains all lexical units
+ */
 public enum LexicalUnit{
     BEGIN,
     PROGNAME,
